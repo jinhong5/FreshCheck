@@ -80,8 +80,7 @@ export default function Camera() {
     //         },
     //         body: JSON.stringify({
     //             photo: photo,
-    //             rating: rating,
-    //             comments: comments
+    //             
     //         })
     //     });
 

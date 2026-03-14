@@ -9,21 +9,24 @@ export default function GoogleSignIn() {
 
     async function handleSuccess(response) {
         console.log(response);
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/google`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                credential: response.credential,
-                clientId: response.clientId
-            }),
-        })
+        console.log(window.location.origin);
+        // const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/google`, {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify({
+        //         credential: response.credential,
+        //         clientId: response.clientId
+        //     }),
+        // })
 
-        if (res.ok) {
-            const data = await res.json();
-            // localStorage.setItem("token", data.token);
-            login(data.token);;
-            navigate("/");
-        }
+        // if (res.ok) {
+        //     const data = await res.json();
+        //     // localStorage.setItem("token", data.token);
+        //     login(data.token);;
+        //     navigate("/");
+        // }
+
+        navigate("/");
 
     }
 
