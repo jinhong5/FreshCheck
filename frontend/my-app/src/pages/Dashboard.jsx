@@ -99,6 +99,7 @@ export default function DashboardPage() {
             <table>
               <thead>
                 <tr>
+                  <th>Photo</th>
                   <th>Label</th>
                   <th>Category</th>
                   <th>Expiry Date</th>
@@ -111,6 +112,7 @@ export default function DashboardPage() {
                   const left = daysLeft(item.date, item.expiryDate);
                   return (
                     <tr key={item.id}>
+                      <td><img src={item.photourl} alt={item.label} width={100} /></td>
                       <td>{item.label}</td>
                       <td>{item.category}</td>
                       <td>{formatDateTime(item.expiryDate)}</td>
@@ -133,7 +135,7 @@ export default function DashboardPage() {
             </div>
 
           </div>
-        </main>
+        </main >
       </>
     );
   }
