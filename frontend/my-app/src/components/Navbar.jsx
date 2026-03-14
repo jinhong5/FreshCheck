@@ -3,6 +3,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from './userContext.jsx';
 import './Navbar.css';
+import { useGoogleLogin } from "@react-oauth/google";
 
 import IconButton from '@mui/material/IconButton';
 import { Brightness4, Brightness7, Check } from '@mui/icons-material'; // MUI icons
@@ -16,6 +17,7 @@ export default function Navbar() {
   const { darkMode, toggleTheme } = useTheme();
   const { loggedIn, logout } = useContext(UserContext);
   const navigate = useNavigate();
+  const { login } = useContext(UserContext)
 
   function handleLogout() {
     logout();
@@ -30,6 +32,39 @@ export default function Navbar() {
       document.documentElement.classList.remove("dark");
     }
   }, [darkMode]);
+
+  async function handleSuccess(tokenResponse) {
+      console.log(tokenResponse);
+      console.log(window.location.origin);
+
+      const googleUser = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${tokenResponse.access_token}`,
+          },
+        }
+      ).then(res => res.json());
+
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: googleUser
+        }),
+      });
+
+      if (res.ok) {
+          const data = await res.json();
+          login(data.token);;
+          navigate("/");
+      }
+  }
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: handleSuccess,
+    onError: () => console.log("Google Login Failed")
+  });
 
   return (
     <nav className="general-navbar">
@@ -47,7 +82,9 @@ export default function Navbar() {
           loggedIn ? (
             <button id="logout" onClick={handleLogout}>Logout</button>
           ) : (
-            <Link to="/login" className="link" id="login">Login</Link>
+            <button className="logout" onClick={() => googleLogin()}>
+              Login
+            </button>
           )
         }
       </div>

@@ -155,23 +155,23 @@ app.post("/addEntry", auth, async (req, res) => {
 
 app.get('/inventory', auth, async (req, res) => {
     try {
-        // const { folderId } = req.query;
-        // console.log("id: " + folderId);
-        // if (folderId) {
-        //     console.log("problem");
-        //     const found = await prisma.food.findUnique({
-        //         where: { id: parseInt(folderId) },
-        //         include: { posts: { orderBy: { id: 'desc' } } }
+        const { folderId } = req.query;
+        console.log("id: " + folderId);
+        if (folderId) {
+            console.log("problem");
+            const found = await prisma.food.findUnique({
+                where: { id: parseInt(folderId) },
+                include: { posts: { orderBy: { id: 'desc' } } }
 
-        //     })
-        //     console.log("problem here");
-        //     console.log(found);
-        //     if (found) {
-        //         console.log("a folder has been found");
-        //         console.log(found.posts);
-        //         return res.status(200).json(found.posts);
-        //     }
-        // }
+            })
+            console.log("problem here");
+            console.log(found);
+            if (found) {
+                console.log("a folder has been found");
+                console.log(found.posts);
+                return res.status(200).json(found.posts);
+            }
+        }
 
 
         if (req.user) {
@@ -193,9 +193,6 @@ app.get('/inventory', auth, async (req, res) => {
     }
 })
 
-// app.get("/api/test", (req, res) => {
-//     res.json({ message: "Backend is working!" });
-// });
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
