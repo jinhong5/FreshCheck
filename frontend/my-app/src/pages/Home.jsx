@@ -1,8 +1,47 @@
 import "./Home.css";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../components/userContext";
 
 export default function HomePage() {
+
+  const [user, setUser] = useState(null);
+  const { loggedIn } = useContext(UserContext);
+
+  async function fetchUserData() {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/me`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+
+    console.log(res);
+
+    if (res.ok) {
+      const data = await res.json();
+      console.log(data);
+      setUser(data);
+    }
+
+  }
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    if (loggedIn) {
+      fetchUserData();
+    }
+  }, [loggedIn]);
+
   return (
+
     <main className="home-main">
+
+      {loggedIn && user && < h3 > Welcome back, {user.firstName}!</h3>}
+      {!loggedIn && <h3>Log in to save your inventory</h3>}
+
       <section className="hero fade-in">
         <h1 className="home-page-title">FreshCheck</h1>
         <p className="home-page-sub">
@@ -45,6 +84,8 @@ export default function HomePage() {
           </p>
         </article>
       </section>
-    </main>
+    </main >
   );
+
+
 }

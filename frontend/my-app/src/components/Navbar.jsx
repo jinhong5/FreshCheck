@@ -34,31 +34,31 @@ export default function Navbar() {
   }, [darkMode]);
 
   async function handleSuccess(tokenResponse) {
-      console.log(tokenResponse);
-      console.log(window.location.origin);
+    console.log(tokenResponse);
+    console.log(window.location.origin);
 
-      const googleUser = await fetch(
-        "https://www.googleapis.com/oauth2/v3/userinfo",
-        {
-          headers: {
-            Authorization: `Bearer ${tokenResponse.access_token}`,
-          },
-        }
-      ).then(res => res.json());
-
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/google`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user: googleUser
-        }),
-      });
-
-      if (res.ok) {
-          const data = await res.json();
-          login(data.token);;
-          navigate("/");
+    const googleUser = await fetch(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      {
+        headers: {
+          Authorization: `Bearer ${tokenResponse.access_token}`,
+        },
       }
+    ).then(res => res.json());
+
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/google`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user: googleUser
+      }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      login(data.token);;
+      navigate("/");
+    }
   }
 
   const googleLogin = useGoogleLogin({
