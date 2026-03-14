@@ -153,6 +153,46 @@ app.post("/addEntry", auth, async (req, res) => {
     }
 })
 
+app.get('/inventory', auth, async (req, res) => {
+    try {
+        // const { folderId } = req.query;
+        // console.log("id: " + folderId);
+        // if (folderId) {
+        //     console.log("problem");
+        //     const found = await prisma.food.findUnique({
+        //         where: { id: parseInt(folderId) },
+        //         include: { posts: { orderBy: { id: 'desc' } } }
+
+        //     })
+        //     console.log("problem here");
+        //     console.log(found);
+        //     if (found) {
+        //         console.log("a folder has been found");
+        //         console.log(found.posts);
+        //         return res.status(200).json(found.posts);
+        //     }
+        // }
+
+
+        if (req.user) {
+            const user = await prisma.user.findUnique({
+                where: { id: req.user.userId },
+                include: { food: { orderBy: { id: 'desc' } } }
+            })
+            if (user) {
+                return res.status(200).json(user.food);
+            }
+            else {
+                return res.status(404).json({ error: "User not found" });
+            }
+        }
+
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+})
+
 // app.get("/api/test", (req, res) => {
 //     res.json({ message: "Backend is working!" });
 // });

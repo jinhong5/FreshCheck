@@ -22,6 +22,7 @@ export default function Navbar() {
     navigate("/");
   }
 
+
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -34,8 +35,8 @@ export default function Navbar() {
     <nav className="general-navbar">
       <div className="nav-left">
         <Link to="/" className="link">Home</Link>
-        <Link to="/dashboard" className="link">Dashboard</Link>
-        <Link to="/new-entry" className="link">New Entry</Link>
+        {loggedIn && <Link to="/dashboard" className="link">Dashboard</Link>}
+        {loggedIn && <Link to="/new-entry" className="link">Scan an Item</Link>}
       </div>
       <div className="nav-right">
         {/* Dark Mode Icon */}

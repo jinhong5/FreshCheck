@@ -18,15 +18,50 @@ function formatStatus(status) {
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
-  return (
-    <>
-      <main className="home-main">
-        <div className="fade-in">
-          <div className="home-page-title">Your Home Page</div>
-          <div className="home-page-sub">Blah</div>
-        </div>
-      </main>
-    </>
-  );
+  async function fetchUserData() {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/me`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+
+    console.log(res);
+
+    if (res.ok) {
+      const data = await res.json();
+      console.log(data);
+      setUser(data);
+    }
+
+  }
+
+  if (user) {
+    return (
+      <>
+        <main className="home-main">
+          <div className="fade-in">
+            <div className="home-page-title">Welcome to FreshCheck</div>
+            <div className="home-page-sub">Description of our application</div>
+          </div>
+        </main>
+      </>
+    );
+  }
+  else {
+    return (
+      <>
+        <main className="home-main">
+          <div className="fade-in">
+            <div className="home-page-title">Welcome to FreshCheck</div>
+            <div className="home-page-sub">Description of our application</div>
+          </div>
+
+          <h2>Login to see your food inventory!</h2>
+        </main>
+      </>
+    );
+  }
 }
