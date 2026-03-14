@@ -5,32 +5,62 @@ from torch.utils.data import DataLoader
 from dataset import FruitZipDataset
 from model import FruitExpirationModel
 
-transform = transforms.Compose([
-    transforms.Resize((224,224)),
-    transforms.ToTensor(),
-])
 
-dataset = FruitZipDataset("../data/fruit_dataset.zip", transform)
+def main():
 
-loader = DataLoader(dataset, batch_size=32, shuffle=True)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
-model = FruitExpirationModel().cuda()
+    # image preprocessing
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+    ])
 
-criterion = torch.nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+    dataset = FruitZipDataset(
+        "data/fruit_dataset.zip",
+        transform
+    )
 
-for epoch in range(10):
-    for images, labels in loader:
+    loader = DataLoader(
+        dataset,
+        batch_size=32,
+        shuffle=True,
+        num_workers=4
+    )
 
-        images = images.cuda()
-        labels = labels.float().cuda()
+    model = FruitExpirationModel().to(device)
 
-        preds = model(images)
+    criterion = torch.nn.MSELoss()
 
-        loss = criterion(preds.squeeze(), labels)
+    optimizer = torch.optim.Adam(
+        model.parameters(),
+        lr=1e-4
+    )
 
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+    epochs = 10
 
-    print("epoch", epoch, "loss:", loss.item())
+    for epoch in range(epochs):
+
+        total_loss = 0
+
+        for images, labels in loader:
+
+            images = images.to(device)
+            labels = labels.float().to(device)
+
+            preds = model(images).squeeze()
+
+            loss = criterion(preds, labels)
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            total_loss += loss.item()
+
+        print(f"Epoch {epoch+1}/{epochs} Loss: {total_loss:.4f}")
+
+
+if __name__ == "__main__":
+    main()
