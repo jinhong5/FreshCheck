@@ -44,6 +44,7 @@ main.home-main {
   letter-spacing: -0.02em;
   margin-bottom: 0.6rem;
   color: var(--text-primary);
+  margin-top: 0;
 }
 
 .home-page-sub {
@@ -96,4 +97,9 @@ main.home-main {
 .pitch-note {
   font-size: 0.9rem;
   color: var(--text-muted, var(--text-secondary));
+}
+
+h3 {
+  text-align: right;
+  margin-bottom: 0;
 }
