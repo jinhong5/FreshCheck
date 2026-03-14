@@ -76,11 +76,29 @@ export default function Camera() {
         setIsSubmitting(false);
     };
 
+    async function photoToDataUrl(photoSrc) {
+        if (!photoSrc) return null;
+        if (photoSrc.startsWith("data:")) return photoSrc;
+        if (photoSrc.startsWith("blob:")) {
+            const res = await fetch(photoSrc);
+            const blob = await res.blob();
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+        return photoSrc;
+    }
+
     async function handleSubmit() {
         setIsSubmitting(true);
         setError(null);
 
         try {
+            const photoPayload = await photoToDataUrl(photo);
+
             const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addEntry`, {
                 method: "POST",
                 headers: {
@@ -88,12 +106,15 @@ export default function Camera() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    photo: photo
+                    photo: photoPayload
                 })
             });
 
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}));
+                if (res.status === 401) {
+                    throw new Error(data.message || "Please sign in again.");
+                }
                 throw new Error(data.error || data.message || "Something went wrong while analyzing your photo.");
             }
 

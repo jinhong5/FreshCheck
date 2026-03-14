@@ -1,4 +1,7 @@
 require('dotenv').config();
+
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require("google-auth-library");
 const express = require("express");
@@ -10,10 +13,23 @@ const prisma = new PrismaClient();
 const cors = require("cors");
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const isDev = process.env.NODE_ENV !== "production";
 app.use(cors({
-    origin: FRONTEND_URL,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: isDev ? true : (origin, cb) => {
+        const allowed = [
+            FRONTEND_URL,
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:3000"
+        ];
+        if (!origin || allowed.some(url => origin === url)) return cb(null, true);
+        if (origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:")) return cb(null, true);
+        return cb(null, false);
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }));
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -24,15 +40,20 @@ app.use(express.json({ limit: '50mb' }));
 //middleware to authenticate a jwt token
 function auth(req, res, next) {
     const header = req.headers.authorization;
-    if (!header) return res.sendStatus(401);
+    if (!header) {
+        return res.status(401).json({ error: "Unauthorized", message: "Please sign in again." });
+    }
 
     const token = header.split(" ")[1];
+    if (!token) {
+        return res.status(401).json({ error: "Unauthorized", message: "Please sign in again." });
+    }
 
     try {
         req.user = jwt.verify(token, process.env.JWT_SECRET);
         next();
     } catch {
-        res.sendStatus(401);
+        return res.status(401).json({ error: "Unauthorized", message: "Please sign in again." });
     }
 }
 
@@ -113,14 +134,41 @@ app.post("/addEntry", auth, async (req, res) => {
                 }
             })
 
-            // TODO: replace this mock analysis with real AI model output.
-            const freshnessScore = 82; // 0–100
-            const daysRemaining = 3;
-            const storageTips = [
-                "Store in the crisper drawer to keep humidity stable.",
-                "Keep away from ethylene-sensitive produce to slow ripening.",
-                "Use within the next few days for best quality."
-            ];
+            let analysis = {
+                freshnessScore: 82,
+                daysRemaining: 3,
+                storageTips: [
+                    "Store in the crisper drawer to keep humidity stable.",
+                    "Keep away from ethylene-sensitive produce to slow ripening.",
+                    "Use within the next few days for best quality."
+                ]
+            };
+
+            const base64 = photo && typeof photo === 'string' && photo.startsWith("data:") ? photo.split(",")[1] : null;
+
+            if (base64 && process.env.GEMINI_API_KEY) {
+                try {
+                    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+                    const prompt = `You are a food freshness assistant. Look at this image of food and return JSON only, with:
+- freshnessScore: number 0-100
+- daysRemaining: integer days until likely spoilage
+- storageTips: array of 2-4 short strings with practical storage advice`;
+                    const result = await model.generateContent([
+                        { text: prompt },
+                        { inlineData: { data: base64, mimeType: "image/png" } }
+                    ]);
+                    const text = result.response?.text?.()?.trim() || '';
+                    const jsonMatch = text.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        const parsed = JSON.parse(jsonMatch[0]);
+                        if (typeof parsed.freshnessScore === 'number') analysis.freshnessScore = parsed.freshnessScore;
+                        if (typeof parsed.daysRemaining === 'number') analysis.daysRemaining = parsed.daysRemaining;
+                        if (Array.isArray(parsed.storageTips)) analysis.storageTips = parsed.storageTips;
+                    }
+                } catch (e) {
+                    console.error("Gemini analysis failed, using fallback:", e);
+                }
+            }
 
             return res.status(201).json({
                 message: "New entry added",
@@ -130,11 +178,7 @@ app.post("/addEntry", auth, async (req, res) => {
                     category: food.category,
                     expiryDate: food.expiryDate
                 },
-                analysis: {
-                    freshnessScore,
-                    daysRemaining,
-                    storageTips
-                }
+                analysis
             });
         }
     }
