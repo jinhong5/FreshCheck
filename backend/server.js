@@ -4,10 +4,10 @@ const { OAuth2Client } = require("google-auth-library");
 const express = require("express");
 const app = express();
 
-// const { PrismaClient } = require('@prisma/client');
-// const prisma = new PrismaClient();
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-//const cors = require("cors");
+const cors = require("cors");
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 // app.use(cors({
