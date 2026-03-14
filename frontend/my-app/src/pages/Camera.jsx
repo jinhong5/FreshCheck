@@ -70,24 +70,23 @@ export default function Camera() {
         setSelect(false);
     };
 
-    // async function handleSubmit() {
+    async function handleSubmit() {
 
-    //     const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addEntry`, {
-    //         method: "POST",
-    //         headers: {
-    //             "Authorization": `Bearer ${localStorage.getItem("token")}`,
-    //             "Content-Type": "application/json"
-    //         },
-    //         body: JSON.stringify({
-    //             photo: photo,
-    //             
-    //         })
-    //     });
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addEntry`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                photo: photo
+            })
+        });
 
-    //     if (res.ok) {
-    //         alert("Review submitted!");
-    //     }
-    // }
+        if (res.ok) {
+            alert("Review submitted!");
+        }
+    }
 
     if (!photo) {
         return (
