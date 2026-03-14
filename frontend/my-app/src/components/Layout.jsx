@@ -23,7 +23,7 @@ export default function Layout() {
         <>
             <header>
                 <Link to="/" className="link">Landing Page</Link>
-                {/* <Link to="/new-entry" className="link">New Entry</Link> */}
+                <Link to="/new-entry" className="link">New Entry</Link>
                 {!loggedIn && <Link to="/login" className="link" id="login">Login</Link>}
                 {loggedIn && <button id="logout" onClick={handleLogout}>Logout</button>}
             </header>
