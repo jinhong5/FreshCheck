@@ -24,21 +24,76 @@
 /* MAIN */
 main.home-main {
   margin: 0 auto;
-  padding: 2.5rem;
+  padding: 3rem 1.5rem 4rem;
   background-color: var(--bg-primary);
-  text-align: center;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.hero {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .home-page-title {
-  font-size: 1.8rem;
+  font-size: 2.3rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.6rem;
   color: var(--text-primary);
 }
 
 .home-page-sub {
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.pitch-grid {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .pitch-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.pitch-card {
+  background: var(--card-bg, rgba(255, 255, 255, 0.02));
+  border-radius: 1rem;
+  padding: 1.5rem 1.6rem;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.25);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  text-align: left;
+}
+
+.pitch-card h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+  color: var(--text-primary);
+}
+
+.pitch-card p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-bottom: 0.6rem;
+}
+
+.pitch-card p:last-child {
+  margin-bottom: 0;
+}
+
+.pitch-note {
+  font-size: 0.9rem;
+  color: var(--text-muted, var(--text-secondary));
 }
