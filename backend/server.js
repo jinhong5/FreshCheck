@@ -120,14 +120,11 @@ app.post('/auth/google', async (req, res) => {
 app.post("/addEntry", auth, async (req, res) => {
     try {
         if (req.user) {
-            //console.log(req.user);
-
             const user = await prisma.user.findUnique({
                 where: { id: req.user.userId }
             })
 
             const { photo } = req.body;
-            //console.log(req.body);
 
             const expiry = new Date();
             expiry.setDate(expiry.getDate() + 7);
@@ -143,8 +140,29 @@ app.post("/addEntry", auth, async (req, res) => {
                 }
             })
 
-            //console.log(food);
-            return res.status(201).json({ message: "New entry added" });
+            // TODO: replace this mock analysis with real AI model output.
+            const freshnessScore = 82; // 0–100
+            const daysRemaining = 3;
+            const storageTips = [
+                "Store in the crisper drawer to keep humidity stable.",
+                "Keep away from ethylene-sensitive produce to slow ripening.",
+                "Use within the next few days for best quality."
+            ];
+
+            return res.status(201).json({
+                message: "New entry added",
+                entry: {
+                    id: food.id,
+                    label: food.label,
+                    category: food.category,
+                    expiryDate: food.expiryDate
+                },
+                analysis: {
+                    freshnessScore,
+                    daysRemaining,
+                    storageTips
+                }
+            });
         }
     }
     catch (err) {
