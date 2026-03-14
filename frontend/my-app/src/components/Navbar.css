@@ -33,3 +33,22 @@
   gap: 16px; /* space between items */
   flex-shrink: 0; /* prevents items from shrinking too much */
 }
+
+.custom-google-login {
+  display: inline-block;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.custom-google-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+/* Optional: scale down the default Google button */
+.custom-google-login > div {
+  transform: scale(0.95);
+}
