@@ -11,6 +11,7 @@ body {
 
   --small-text-colour: #ffffff;
   --accent-text-colour: #b32d00;
+  --accent-color: #D53B07;
   --primary-accent-colour: #D53B07;
   --border-colour: #dfdfdf;
   --disabled-colour: #dfdfdf;
@@ -44,6 +45,7 @@ body {
 
   --small-text-colour: #c5c5c5;
   --accent-text-colour: #c23202;
+  --accent-color: #9c2a04;
   --primary-accent-colour: #9c2a04;
   --border-colour: #5b5a5a;
   --disabled-colour: #555555;
