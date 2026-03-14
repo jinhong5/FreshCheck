@@ -126,25 +126,23 @@ app.use(express.json({ limit: '50mb' }));
 //                 where: { id: req.user.userId }
 //             })
 
-//             const { photo, rating, comments } = req.body;
+//             const { photo } = req.body;
 //             //console.log(req.body);
 
-//             const review = await prisma.review.create({
+//             const food = await prisma.food.create({
 //                 data: {
 //                     userId: user.id,
 //                     photourl: photo,
-//                     rating: rating,
-//                     opinion: comments || null,
 //                     date: new Date()
 //                 }
 //             })
 
-//             //console.log(review);
+//             //console.log(food);
 //             return res.status(201).json({ message: "New entry added" });
 //         }
 //     }
 //     catch (err) {
-//         console.error("Error creating review:", err);
+//         console.error("Error creating food:", err);
 //         return res.status(500).json({ error: err.message });
 //     }
 // })

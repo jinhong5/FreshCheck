@@ -9,14 +9,14 @@ export function UserProvider({ children }) {
     });
 
 
-    // useEffect(() => {
-    //     function handleStorageChange() {
-    //         const token = localStorage.getItem("token");
-    //         setLoggedIn(token ? { token } : null);
-    //     }
-    //     window.addEventListener("storage", handleStorageChange);
-    //     return () => window.removeEventListener("storage", handleStorageChange);
-    // }, []);
+    useEffect(() => {
+        function handleStorageChange() {
+            const token = localStorage.getItem("token");
+            setLoggedIn(token ? { token } : null);
+        }
+        window.addEventListener("storage", handleStorageChange);
+        return () => window.removeEventListener("storage", handleStorageChange);
+    }, []);
 
     const login = (token) => {
         localStorage.setItem("token", token);
