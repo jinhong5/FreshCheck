@@ -4,8 +4,8 @@ const { OAuth2Client } = require("google-auth-library");
 const express = require("express");
 const app = express();
 
-// const { PrismaClient } = require('@prisma/client');
-// const prisma = new PrismaClient();
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const cors = require("cors");
 
