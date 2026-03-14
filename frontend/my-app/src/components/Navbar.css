@@ -1,19 +1,13 @@
 .general-navbar {
-  background: var(--bg-secondary);
+  display: flex;
+  justify-content: space-between; /* Push left and right apart */
+  align-items: center;
   padding: 16px 32px;
-  box-shadow: var(--shadow-small);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background-color: var(--bg-secondary); /* optional light/dark variables */
+  flex-wrap: nowrap; /* prevent wrapping to next line */
 }
 
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.nav-links .link {
+.general-navbar .link {
   color: var(--text-primary);
   text-decoration: none;
   font-size: 16px;
@@ -21,14 +15,21 @@
   transition: color 0.3s ease;
 }
 
-.nav-links .link:hover {
+.general-navbar .link:hover {
   color: var(--accent-color);
 }
 
-.nav-links .link:active {
+.general-navbar .link:active {
   color: var(--accent-color);
 }
 
-.nav-links .link:focus {
+.general-navbar .link:focus {
   color: var(--accent-color);
+}
+
+.nav-left, .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* space between items */
+  flex-shrink: 0; /* prevents items from shrinking too much */
 }

@@ -1,0 +1,44 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.5s ease both;
+}
+
+
+/* MAIN */
+main.home-main {
+  margin: 0 auto;
+  padding: 2.5rem;
+  background-color: var(--bg-primary);
+  text-align: center;
+  min-height: 100vh;
+}
+
+.home-page-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.3rem;
+  color: var(--text-primary);
+}
+
+.home-page-sub {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}

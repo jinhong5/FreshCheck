@@ -1,10 +1,11 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useContext } from "react";
 import { useTheme } from '../contexts/ThemeContext';
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from 'react';
 import { UserContext } from './userContext.jsx';
-import './Navbar.css'
-import ToggleButton from '@mui/material/ToggleButton';
+import './Navbar.css';
+
+import IconButton from '@mui/material/IconButton';
+import { Brightness4, Brightness7, Check } from '@mui/icons-material'; // MUI icons
 
 /**
  * Creates a top nav bar for any page
@@ -13,10 +14,7 @@ import ToggleButton from '@mui/material/ToggleButton';
  */
 export default function Navbar() {
   const { darkMode, toggleTheme } = useTheme();
-
   const { loggedIn, logout } = useContext(UserContext);
-
-  //const loggedIn = localStorage.getItem("token");
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -34,30 +32,24 @@ export default function Navbar() {
 
   return (
     <nav className="general-navbar">
-      <div className="nav-links">
+      <div className="nav-left">
         <Link to="/" className="link">Home</Link>
         <Link to="/dashboard" className="link">Dashboard</Link>
         <Link to="/new-entry" className="link">New Entry</Link>
-        <div>
-          <label className="switch">
-            <input type="checkbox" onChange={() => toggleTheme()} />
-            <span className="slider round"></span>
-          </label>
-        </div>
-
-        <ToggleButton
-          value="check"
-          selected={selected}
-          onChange={() => setSelected((prevSelected) => !prevSelected)}
-        >
-          <CheckIcon />
-        </ToggleButton>
-
+      </div>
+      <div className="nav-right">
+        {/* Dark Mode Icon */}
+        <IconButton onClick={toggleTheme} color="inherit" sx={{ ml: 2 }}>
+          {darkMode ? <Brightness7 /> : <Brightness4 />}
+        </IconButton>
         {
-          loggedIn ? <button id="logout" onClick={handleLogout}>Logout</button>
-            : <Link to="/login" className="link" id="login">Login</Link>
+          loggedIn ? (
+            <button id="logout" onClick={handleLogout}>Logout</button>
+          ) : (
+            <Link to="/login" className="link" id="login">Login</Link>
+          )
         }
       </div>
     </nav>
-  )
+  );
 }
