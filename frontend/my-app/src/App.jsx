@@ -15,7 +15,6 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Layout />}>
-
           <Route path="login" element={<Login />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="new-entry" element={<Camera />} />
@@ -26,3 +25,5 @@ function App() {
 }
 
 export default App
+
+
