@@ -1,5 +1,5 @@
 import torch
-from model2 import MultimodalModel
+from backend.src.model import MultimodalModel
 
 from PIL import Image
 import torchvision.transforms as transforms

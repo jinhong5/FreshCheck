@@ -1,41 +1,65 @@
-# import zipfile
-# from torch.utils.data import Dataset
-# from PIL import Image
-# import io
-# import re
+import os
+import glob
+import torch
+from torch.utils.data import Dataset
+from PIL import Image
 
-# class FruitZipDataset(Dataset):
-#     def __init__(self, zip_path, transform=None, fruit="Banana"):
-#         self.zip_path = zip_path
-#         self.transform = transform
-#         self.fruit = fruit
 
-#         with zipfile.ZipFile(zip_path) as archive:
-#             files = archive.namelist()
+def read_methane_value(txt_path):
+    """Reads methane ppm values from the txt file and returns the mean."""
+    values = []
+    with open(txt_path, "r") as f:
+        for line in f:
+            for p in line.strip().split():
+                try:
+                    values.append(float(p))
+                except:
+                    continue
+    return sum(values) / len(values) if values else 0.0
 
-#             # include all IR or sRGB images under Banana
-#             self.files = [
-#                 f for f in files
-#                 if f"/{fruit}/" in f and ("sRGB_images" in f or "IR_fusion_images" in f)
-#                 and f.lower().endswith((".jpg", ".png"))
-#             ]
 
-#         print(f"Found {len(self.files)} images for {self.fruit}")
-#         print("Sample files:", self.files[:5])
+class FruitDataset(Dataset):
+    def __init__(self, root_dir, transform=None):
+        self.root_dir = root_dir
+        self.transform = transform
+        self.samples = []
 
-#     def __len__(self):
-#         return len(self.files)
+        class_map = {"Not_spoiled": 0, "Spoiled": 1}
 
-#     def __getitem__(self, idx):
-#         with zipfile.ZipFile(self.zip_path) as archive:
-#             file = self.files[idx]
-#             img_bytes = archive.read(file)
-#             img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+        classified_dir = os.path.join(root_dir, "Classified")
 
-#         if self.transform:
-#             img = self.transform(img)
+        # iterate over fruits first
+        for fruit in os.listdir(classified_dir):
+            fruit_dir = os.path.join(classified_dir, fruit)
 
-#         # Placeholder label extraction from filename
-#         # For now, assign 0; you can implement a real label mapping later
-#         label = 0.0
-#         return img, label
+            for label_name, label in class_map.items():
+                label_dir = os.path.join(fruit_dir, label_name)
+
+                img_dir = os.path.join(label_dir, "sRGB_images")
+                methane_file = os.path.join(label_dir, "Methane_gas_readings.txt")
+
+                if not os.path.exists(img_dir) or not os.path.exists(methane_file):
+                    continue
+
+                methane_value = read_methane_value(methane_file)
+                images = glob.glob(os.path.join(img_dir, "*.jpg"))
+
+                for img_path in images:
+                    self.samples.append(
+                        (img_path, methane_value, label)
+                    )
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, idx):
+        img_path, methane_value, label = self.samples[idx]
+
+        image = Image.open(img_path).convert("RGB")
+        if self.transform:
+            image = self.transform(image)
+
+        methane_tensor = torch.tensor([methane_value], dtype=torch.float32)
+        label = torch.tensor(label, dtype=torch.long)
+
+        return image, methane_tensor, label
