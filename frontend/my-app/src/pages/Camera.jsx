@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
-import "../pages/Camera.css"
+import { useState, useEffect, useRef } from 'react';
+import "../pages/Camera.css";
 
 export default function Camera() {
     const videoRef = useRef(null);
@@ -8,6 +8,9 @@ export default function Camera() {
     const [photo, setPhoto] = useState(null);
     const [stream, setStream] = useState(null);
     const [selected, setSelect] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [analysis, setAnalysis] = useState(null);
+    const [error, setError] = useState(null);
 
     // when the page loads, ask the user for camera permissions
     useEffect(() => {
@@ -68,23 +71,60 @@ export default function Camera() {
     const retakePhoto = () => {
         setPhoto(null);
         setSelect(false);
+        setAnalysis(null);
+        setError(null);
+        setIsSubmitting(false);
     };
 
+    async function photoToDataUrl(photoSrc) {
+        if (!photoSrc) return null;
+        if (photoSrc.startsWith("data:")) return photoSrc;
+        if (photoSrc.startsWith("blob:")) {
+            const res = await fetch(photoSrc);
+            const blob = await res.blob();
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+        return photoSrc;
+    }
+
     async function handleSubmit() {
+        setIsSubmitting(true);
+        setError(null);
 
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addEntry`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${localStorage.getItem("token")}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                photo: photo
-            })
-        });
+        try {
+            const photoPayload = await photoToDataUrl(photo);
 
-        if (res.ok) {
-            alert("Review submitted!");
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addEntry`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    photo: photoPayload
+                })
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                if (res.status === 401) {
+                    throw new Error(data.message || "Please sign in again.");
+                }
+                throw new Error(data.error || data.message || "Something went wrong while analyzing your photo.");
+            }
+
+            const data = await res.json();
+            setAnalysis(data.analysis || null);
+        } catch (err) {
+            console.error(err);
+            setError(err.message || "Unable to analyze photo right now.");
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -131,8 +171,38 @@ export default function Camera() {
 
                     <br />
 
-                    <button id="checkmark" onClick={handleSubmit}>✓</button>
+                    <button
+                        id="checkmark"
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? "Analyzing..." : "✓"}
+                    </button>
 
+                    {error && (
+                        <div className="analysis-error">
+                            {error}
+                        </div>
+                    )}
+
+                    {analysis && (
+                        <div className="analysis-card">
+                            <h2>Freshness analysis</h2>
+                            <p className="analysis-score">
+                                Freshness score: <span>{analysis.freshnessScore}</span>/100
+                            </p>
+                            <p className="analysis-days">
+                                Estimated days remaining: <strong>{analysis.daysRemaining}</strong>
+                            </p>
+                            {analysis.storageTips && analysis.storageTips.length > 0 && (
+                                <ul className="analysis-tips">
+                                    {analysis.storageTips.map((tip, idx) => (
+                                        <li key={idx}>{tip}</li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    )}
                 </span>
             </div>
         )
