@@ -19,14 +19,14 @@ def main():
 
     dataset = FruitZipDataset(
         "data/fruit_dataset.zip",
-        transform
+        transform=transform
     )
 
     loader = DataLoader(
         dataset,
         batch_size=32,
         shuffle=True,
-        num_workers=4  # <- must be zero on Windows for non-picklable dataset
+        num_workers=0  # <- must be zero on Windows for non-picklable dataset
     )
 
     model = FruitExpirationModel().to(device)
@@ -60,6 +60,20 @@ def main():
             total_loss += loss.item()
 
         print(f"Epoch {epoch+1}/{epochs} Loss: {total_loss:.4f}")
+        
+    torch.save(model.state_dict(), "banana_model.pth")
+    print("Model saved to banana_model.pth")
+
+    model.eval()  # switch to evaluation mode
+    with torch.no_grad():
+        for i, (images, labels) in enumerate(loader):
+            images = images.to(device)
+            labels = labels.to(device)
+            preds = model(images).squeeze()
+            print(f"Batch {i+1}")
+            for j in range(min(5, len(preds))):  # print first 5 predictions
+                print(f"Pred: {preds[j].item():.2f}, True: {labels[j].item():.2f}")
+            break 
 
 
 if __name__ == "__main__":
