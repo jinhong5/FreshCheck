@@ -25,7 +25,7 @@
 main.home-main {
   margin: 0 auto;
   padding: 3rem 1.5rem 4rem;
-  background-color: var(--bg-primary);
+  background: transparent;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -40,18 +40,21 @@ main.home-main {
 }
 
 .home-page-title {
-  font-size: 2.3rem;
+  font-size: 2.8rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  margin-bottom: 0.6rem;
-  color: var(--text-primary);
+  margin-bottom: 2rem;
+  color: #ff8c42;
+  /* Summery orange */
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.7);
   margin-top: 0;
 }
 
 .home-page-sub {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  max-width: 540px;
+  font-size: 1.15rem;
+  color: #4a5568;
+  font-weight: 500;
+  max-width: 580px;
   margin: 0 auto;
 }
 
@@ -60,6 +63,7 @@ main.home-main {
   gap: 1.5rem;
   max-width: 1000px;
   margin: 0 auto;
+  justify-content: space-evenly;
 }
 
 @media (min-width: 768px) {
@@ -69,32 +73,34 @@ main.home-main {
 }
 
 .pitch-card {
-  background: var(--card-bg, rgba(255, 255, 255, 0.02));
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
   border-radius: 1rem;
   padding: 1.5rem 1.6rem;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.25);
-  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 10px 25px rgba(255, 140, 66, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   text-align: left;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pitch-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.4);
-  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 40px rgba(255, 140, 66, 0.25);
+  border-color: #ffffff;
 }
 
 .pitch-card h2 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 0.6rem;
-  color: var(--text-primary);
+  color: #ff6b6b;
+  /* Summery coral */
 }
 
 .pitch-card p {
   font-size: 0.95rem;
-  line-height: 1.5;
-  color: var(--text-secondary);
+  line-height: 1.6;
+  color: #2d3748;
   margin-bottom: 0.6rem;
 }
 
@@ -104,10 +110,56 @@ main.home-main {
 
 .pitch-note {
   font-size: 0.9rem;
-  color: var(--text-muted, var(--text-secondary));
+  color: #718096;
 }
 
 h3 {
   text-align: right;
   margin-bottom: 0;
+  color: #ff6b6b;
+}
+
+/* DARK MODE OVERRIDES */
+.dark main.home-main {
+  /* Deep oceanic/tropical night */
+  background: transparent;
+}
+
+.dark .home-page-title {
+  color: #ffb076;
+  /* Bright vibrant summery orange */
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.dark .home-page-sub {
+  color: #e2e8f0;
+}
+
+.dark .pitch-card {
+  background: rgba(16, 28, 45, 0.65);
+  box-shadow: 0 10px 25px rgba(255, 176, 118, 0.08);
+  /* Subtle warm glow */
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dark .pitch-card:hover {
+  box-shadow: 0 20px 40px rgba(255, 176, 118, 0.2);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark .pitch-card h2 {
+  color: #ff8e8b;
+  /* Bright pastely coral */
+}
+
+.dark .pitch-card p {
+  color: #ccd6f6;
+}
+
+.dark .pitch-note {
+  color: #8892b0;
+}
+
+.dark h3 {
+  color: #ff8e8b;
 }
