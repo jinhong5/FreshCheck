@@ -75,11 +75,21 @@ export default function DashboardPage() {
 
   }, []);
 
+  function daysLeft(start, end) {
+    if (!start || !end) return 0;
+    return Math.ceil((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24));
+  }
+
   if (user && inventory) {
 
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-    const paginatedInventory = inventory.slice(start, end);
+
+    const sortedInventory = inventory
+      ? [...inventory].sort((a, b) => daysLeft(a.date, a.expiryDate) - daysLeft(b.date, b.expiryDate))
+      : [];
+
+    const paginatedInventory = sortedInventory.slice(start, end);
 
     return (
       <>
@@ -89,6 +99,7 @@ export default function DashboardPage() {
             <table>
               <thead>
                 <tr>
+                  <th>Photo</th>
                   <th>Label</th>
                   <th>Category</th>
                   <th>Expiry Date</th>
@@ -96,14 +107,20 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {paginatedInventory && paginatedInventory.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.label}</td>
-                    <td>{item.category}</td>
-                    <td>{formatDateTime(item.expiryDate)}</td>
-                    <td>{Math.ceil((new Date(item.expiryDate) - new Date(item.date)) / (1000 * 60 * 60 * 24))}</td>
-                  </tr>
-                ))}
+                {paginatedInventory && paginatedInventory.map((item) => {
+
+                  const left = daysLeft(item.date, item.expiryDate);
+                  return (
+                    <tr key={item.id}>
+                      <td><img src={item.photourl} alt={item.label} width={100} /></td>
+                      <td>{item.label}</td>
+                      <td>{item.category}</td>
+                      <td>{formatDateTime(item.expiryDate)}</td>
+                      <td style={{ color: left <= 1 ? "red" : "inherit", fontWeight: left <= 1 ? "bold" : "normal" }}>
+                        {left}</td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
 
@@ -118,7 +135,7 @@ export default function DashboardPage() {
             </div>
 
           </div>
-        </main>
+        </main >
       </>
     );
   }

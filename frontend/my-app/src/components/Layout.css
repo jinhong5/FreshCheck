@@ -44,8 +44,8 @@ footer {
   color: var(--text-primary);
   padding: 10px;
   font-size: 14px;
-  text-align: center;
   display: flex;
+  text-align: center;
   justify-content: center;
   align-items: center;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
