@@ -153,9 +153,9 @@ app.post("/addEntry", auth, async (req, res) => {
     }
 })
 
-// app.get("/api/test", (req, res) => {
-//     res.json({ message: "Backend is working!" });
-// });
+app.get("/api/health", (req, res) => {
+    res.json({ ok: true });
+});
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
