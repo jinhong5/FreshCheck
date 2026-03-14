@@ -52,70 +52,43 @@ app.get('/user/me', auth, async (req, res) => {
 })
 
 app.post('/auth/google', async (req, res) => {
-    const { credential, clientId } = req.body;
-    console.log(req.body);
+  try {
 
-    try {
-        const ticket = await client.verifyIdToken({
-            idToken: credential,
-            audience: clientId
-        });
+    const { user } = req.body;
 
-        console.log("ticket created");
-
-        const payload = ticket.getPayload();
-
-        if (!payload) {
-            return res.status(400).json({ error: "Invalid token payload" });
-        }
-        const { given_name, family_name, email, sub } = payload;
-
-        console.log("payload extracted");
-        console.log(payload);
-
-        let user = await prisma.user.findUnique({
-            where: { email: email }
-        });
-
-        console.log("user lookup done");
-
-        if (!user) {
-            user = await prisma.user.create({
-                data: {
-                    googleId: sub,
-                    firstName: given_name,
-                    lastName: family_name,
-                    email: email
-                }
-            })
-
-        }
-
-        console.log("user found or created");
-        //generate jwt token
-        const appToken = jwt.sign(
-            { userId: user.id },
-            process.env.JWT_SECRET,
-            { expiresIn: "7d" }
-        );
-
-        console.log("jwt created");
-
-        res.json({
-            success: true,
-            token: appToken,
-            user: {
-                id: user.id,
-                firstName: user.firstName,
-                email: user.email,
-            },
-        });
+    if (!user || !user.email) {
+      return res.status(400).json({ error: "Invalid Google user data" });
     }
-    catch (err) {
-        console.log("error in /auth/google:", err);
-        res.status(500).json({ success: false, message: err.message });
+
+    const email = user.email;
+    const name = user.name;
+
+    let dbUser = await prisma.user.findUnique({
+      where: { email: email }
+    });
+
+    if (!dbUser) {
+      dbUser = await prisma.user.create({
+        data: {
+          email: email,
+          firstName: name
+        }
+      });
     }
-})
+
+    const token = jwt.sign(
+      { userId: dbUser.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({ token });
+
+  } catch (err) {
+    console.error("Google auth error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.post("/addEntry", auth, async (req, res) => {
     try {
@@ -171,9 +144,46 @@ app.post("/addEntry", auth, async (req, res) => {
     }
 })
 
-app.get("/api/health", (req, res) => {
-    res.json({ ok: true });
-});
+app.get('/inventory', auth, async (req, res) => {
+    try {
+        const { folderId } = req.query;
+        console.log("id: " + folderId);
+        if (folderId) {
+            console.log("problem");
+            const found = await prisma.food.findUnique({
+                where: { id: parseInt(folderId) },
+                include: { posts: { orderBy: { id: 'desc' } } }
+
+            })
+            console.log("problem here");
+            console.log(found);
+            if (found) {
+                console.log("a folder has been found");
+                console.log(found.posts);
+                return res.status(200).json(found.posts);
+            }
+        }
+
+
+        if (req.user) {
+            const user = await prisma.user.findUnique({
+                where: { id: req.user.userId },
+                include: { food: { orderBy: { id: 'desc' } } }
+            })
+            if (user) {
+                return res.status(200).json(user.food);
+            }
+            else {
+                return res.status(404).json({ error: "User not found" });
+            }
+        }
+
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+})
+
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
