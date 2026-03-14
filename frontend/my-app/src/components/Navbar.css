@@ -1,0 +1,14 @@
+.general-navbar {
+  background: var(--bg-secondary);
+  padding: 16px 32px;
+  box-shadow: var(--shadow-small);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
