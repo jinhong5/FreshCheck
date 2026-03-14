@@ -26,7 +26,7 @@ def main():
         dataset,
         batch_size=32,
         shuffle=True,
-        num_workers=4
+        num_workers=4  # <- must be zero on Windows for non-picklable dataset
     )
 
     model = FruitExpirationModel().to(device)
