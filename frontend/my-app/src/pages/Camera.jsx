@@ -261,7 +261,7 @@ export default function Camera() {
           {console.log("analysis: " + analysis)}
           {hasSubmit && !isSubmitting && (
             <div className="analysis-card">
-              <h2>Freshness analysis: </h2>
+              <h2 className="analysis-title">Freshness analysis:</h2>
               <p className="analysis-score">
                 <span>{analysis}</span>
               </p>

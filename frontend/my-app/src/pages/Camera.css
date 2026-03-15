@@ -129,3 +129,7 @@ input:focus {
     outline-color: #63c5da;
     outline-offset: 0.5ch;
 }
+
+.analysis-title {
+  color: var(--text-primary);
+}
