@@ -49,7 +49,7 @@ export default function HomePage() {
           <article className="pitch-card">
             <h2>What it is</h2>
             <p>
-              FreshCheck lets you quickly scan produce with your phone. Our AI analyzes the image and estimates how fresh
+              FreshCheck lets you quickly scan produce with your webcam. Our AI analyzes the image and estimates how fresh
               the food is and how long it likely has before it spoils.
             </p>
           </article>
