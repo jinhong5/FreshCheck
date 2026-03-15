@@ -18,11 +18,13 @@ export default function Camera() {
     const [photo, setPhoto] = useState(null);
     const [stream, setStream] = useState(null);
     const [selected, setSelect] = useState(false);
+    const [hasSubmit, setHasSubmit] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [analysis, setAnalysis] = useState(null);
     const [error, setError] = useState(null);
     const [uploaded, setUploaded] = useState(null);
     const [label, setLabel] = useState(null);
+    // const [new, setNew] = useState(false);
 
     // const [count, setCounter] = useState(1);
 
@@ -53,6 +55,10 @@ export default function Camera() {
             videoRef.current.play().catch(err => console.log(err));
         }
     }, [photo, stream]);
+
+    useEffect(() => {
+        setSelect(false);
+    }, [analysis])
 
     function takePicture() {
         const video = videoRef.current;
@@ -122,6 +128,7 @@ export default function Camera() {
     }
 
     async function handleSubmit() {
+        setHasSubmit(true);
         setIsSubmitting(true);
         setError(null);
 
@@ -171,6 +178,7 @@ export default function Camera() {
 
             const data = await res.json();
             setAnalysis(data.entry.category || null);
+            setSelect(false);
         } catch (err) {
             console.error(err);
             setError(err.message || "Unable to analyze photo right now.");
@@ -211,7 +219,7 @@ export default function Camera() {
     else {
         return (
             <div className="db-main">
-                <span className="container">
+                <div className="container">
                     <div>
                         <img className="video" src={photo} />
                         <br />
@@ -220,33 +228,41 @@ export default function Camera() {
                         <canvas ref={canvasRef} hidden></canvas>
 
                         <br />
+                        {console.log("Out: " + selected)}
+                        {selected ?
+                        (<div className="label-input">
+                            <div className="modal">
+                                {console.log("In: " + selected)}
+                                <label>Enter Food Label</label>
+                                    <input type="text" onChange={(e) => {setLabel(e.target.value)}} placeholder={"temp" + count + "-" + new Date().getMonth() + new Date().getDay()}></input>
+                                <br />
+                                <span>
+                                    <button
+                                        id="checkmark"
+                                        onClick={handleSubmit}
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? "Analyzing..." : "Submit"}
+                                        {/* {setSelect(false)} */}
+                                    </button>
+                                    <button onClick={() => setSelect(false)}>Cancel</button>
+                                </span>
 
-                        <div className="label-input">
-                            <label>Food Label: 
-                                <input type="text" onChange={(e) => {setLabel(e.target.value)}} placeholder="Enter food label"></input>
-                            </label>
-
-                            <button
-                                id="checkmark"
-                                onClick={handleSubmit}
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? "Analyzing..." : "->"}
-                            </button>
-                        </div>
+                            </div>
+                        </div>)
+                        : <></>}
                     </div>
 
                     <br />
-
-
-                    
+ 
                     {error && (
                         <div className="analysis-error">
                             {error}
                         </div>
                     )}
 
-                    {analysis && (
+                    {console.log("analysis: " + analysis)}
+                    {hasSubmit && !isSubmitting && (
                         <div className="analysis-card">
                             <h2>Freshness analysis: </h2>
                             <p className="analysis-score">
@@ -264,7 +280,7 @@ export default function Camera() {
                             )} */}
                         </div> 
                     )}
-                </span>
+                </div>
             </div>
         )
     }
