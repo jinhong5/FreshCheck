@@ -123,14 +123,20 @@ app.post("/addEntry", auth, async (req, res) => {
               where: { id: req.user.userId }
           })
 
-          const { photo, category, label, count } = req.body;
+          const { photo, category, label, count, freshness } = req.body;
 
           if (label && label.length > 100) {
               return res.status(400).json({ error: "Label is too long (max 100 characters)" });
           }
 
           const expiry = new Date();
-          expiry.setDate(expiry.getDate() + 7);
+          if(category === "Spoiled");
+          else{
+            let daysLeft = 7;
+            if (2 < freshness && freshness <= 4) daysLeft = 4;
+            else if (0 < freshness && freshness <= 2) daysLeft = 2;
+            expiry.setDate(expiry.getDate() + daysLeft);
+          }
 
           const food = await prisma.food.create({
               data: {

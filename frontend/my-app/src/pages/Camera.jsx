@@ -156,6 +156,7 @@ export default function Camera() {
                 body: JSON.stringify({
                     photo: photoPayload,
                     category: predicted.prediction,
+                    freshness: predicted.not_spoiled,
                     label: label,
                     count: count
                 })

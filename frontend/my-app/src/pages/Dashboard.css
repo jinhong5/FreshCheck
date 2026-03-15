@@ -50,14 +50,19 @@ table {
   box-shadow: var(--shadow-small);
   border-radius: 10px;
   overflow: hidden;
+  background-color: var(--bg-tertiary);
 }
 
 th,
 td {
   padding: 1rem;
   text-align: left;
-  background-color: var(--bg-tertiary);
   border-bottom: 1px solid var(--border-colour);
+}
+
+tr.spoiled {
+  background-color: var(--warning);
+  color: var(--text-primary);
 }
 
 th {
@@ -65,10 +70,6 @@ th {
   backdrop-filter: blur(5px);
   font-weight: 600;
   color: var(--text-primary);
-}
-
-tr:hover {
-  background-color: var(--bg-primary);
 }
 
 .pagination {
