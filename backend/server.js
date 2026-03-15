@@ -154,8 +154,6 @@ app.post("/addEntry", auth, async (req, res) => {
             });
         }
       }
-    }
-  }
   catch (err) {
     console.error("Error creating food:", err);
     return res.status(500).json({ error: err.message });
