@@ -69,6 +69,7 @@ export default function Navbar() {
   return (
     <nav className="general-navbar">
       <div className="nav-left">
+        <img src={"logoUnpadded.png"} className="logo"/>
         <Link to="/" className="link">Home</Link>
         {loggedIn && <Link to="/dashboard" className="link">Dashboard</Link>}
         {loggedIn && <Link to="/new-entry" className="link">Upload</Link>}
