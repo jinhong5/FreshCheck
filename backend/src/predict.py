@@ -14,6 +14,7 @@ p2 = "C:/Users/andre/Hackathon/FreshCheck/backend/data/TR-6/Classified/Banana/Sp
 t1 = "test_images/normal_banana.jpg"
 t2 = "test_images/rotten_banana.jpg"
 t3 = "test_images/green_banana.jpg"
+g1 = "test_images/greenest_banana.jpg"
 
 def predImage(img):
   # recreate model
@@ -53,3 +54,9 @@ if __name__ == "__main__":
   result = predImage(img_path)
 
   print(json.dumps(result), flush=True)
+  # print(predImage(p1))
+  # print(predImage(p2))
+  # print(predImage(t1))
+  # print(predImage(t2))
+  # print(predImage(t3))
+  # print(predImage(g1))
