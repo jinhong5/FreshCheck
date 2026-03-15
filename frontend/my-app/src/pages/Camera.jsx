@@ -92,12 +92,40 @@ export default function Camera() {
         return photoSrc;
     }
 
+    function dataURLtoBlob(dataURL) {
+      const arr = dataURL.split(",");
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+
+      while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+      }
+
+      return new Blob([u8arr], { type: mime });
+    }
+
     async function handleSubmit() {
         setIsSubmitting(true);
         setError(null);
 
         try {
             const photoPayload = await photoToDataUrl(photo);
+            const blob = dataURLtoBlob(photo);
+
+            const formData = new FormData();
+            formData.append("image", blob, "capture.png");
+
+            const prediction = await fetch(`${import.meta.env.VITE_API_BASE_URL}/predict`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                },
+                body: formData
+            });
+
+            const predicted = await prediction.json();
 
             const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addEntry`, {
                 method: "POST",
@@ -106,7 +134,8 @@ export default function Camera() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    photo: photoPayload
+                    photo: photoPayload,
+                    category: predicted.prediction
                 })
             });
 

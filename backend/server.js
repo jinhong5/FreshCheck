@@ -4,6 +4,9 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require("google-auth-library");
+const { spawn } = require("child_process");
+const multer = require("multer");
+
 const express = require("express");
 const app = express();
 
@@ -11,6 +14,8 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const cors = require("cors");
+
+const upload = multer({ dest: "uploads/" });
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 const isDev = process.env.NODE_ENV !== "production";
@@ -118,7 +123,7 @@ app.post("/addEntry", auth, async (req, res) => {
                 where: { id: req.user.userId }
             })
 
-            const { photo } = req.body;
+            const { photo, category } = req.body;
 
             const expiry = new Date();
             expiry.setDate(expiry.getDate() + 7);
@@ -129,7 +134,7 @@ app.post("/addEntry", auth, async (req, res) => {
                     photourl: photo,
                     date: new Date(),
                     label: "Apple-031426",
-                    category: "fresh",
+                    category: category,
                     expiryDate: expiry
                 }
             })
@@ -191,7 +196,7 @@ app.post("/addEntry", auth, async (req, res) => {
 app.get('/inventory', auth, async (req, res) => {
     try {
         const { folderId } = req.query;
-        console.log("id: " + folderId);
+        // console.log("id: " + folderId);
         if (folderId) {
             console.log("problem");
             const found = await prisma.food.findUnique({
@@ -228,6 +233,27 @@ app.get('/inventory', auth, async (req, res) => {
     }
 })
 
+app.post("/predict", upload.single("image"), (req, res) => {
+    const imagePath = req.file.path;
+
+    const python = spawn("python", ["src/predict.py", imagePath]);
+
+    let data = "";
+
+    python.stdout.on("data", (chunk) => {
+        data += chunk.toString();
+    });
+
+    python.stderr.on("data", (err) => {
+        console.error("PYTHON ERROR:", err.toString());
+    });
+
+    python.on("close", () => {
+        res.json(JSON.parse(data));
+    });
+
+
+});
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
