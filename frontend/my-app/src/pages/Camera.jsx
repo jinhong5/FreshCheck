@@ -179,7 +179,8 @@ export default function Camera() {
 
             const data = await res.json();
             setAnalysis(data.entry.category || null);
-            setSelect(false);
+            console.log(analysis);
+            // setSelect(false);
         } catch (err) {
             console.error(err);
             setError(err.message || "Unable to analyze photo right now.");
@@ -230,6 +231,7 @@ export default function Camera() {
 
                         <br />
                         {console.log("Out: " + selected)}
+                        
                         {selected ?
                         (<div className="label-input">
                             <div className="modal">
@@ -263,6 +265,7 @@ export default function Camera() {
                     )}
 
                     {console.log("analysis: " + analysis)}
+                    
                     {hasSubmit && !isSubmitting && (
                         <div className="analysis-card">
                             <h2>Freshness analysis: </h2>

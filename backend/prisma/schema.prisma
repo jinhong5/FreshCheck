@@ -14,7 +14,6 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  googleId String @unique
   firstName String
   lastName String
   email String @unique
@@ -30,6 +29,7 @@ model Food {
   category String
   date DateTime @default(now())
   expiryDate DateTime
+  shelfLife Int
   userId Int
   user User @relation(fields: [userId], references: [id])
 
