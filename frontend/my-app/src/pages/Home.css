@@ -22,11 +22,14 @@
 
 
 /* MAIN */
+main.home-page {
+  min-height: 100vh;
+}
+
 main.home-main {
   margin: 0 auto;
   padding: 3rem 1.5rem 4rem;
   background: transparent;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
@@ -117,6 +120,7 @@ h3 {
   text-align: right;
   margin-bottom: 0;
   color: #ff6b6b;
+  padding: 0rem 0rem 0rem;
 }
 
 /* DARK MODE OVERRIDES */
