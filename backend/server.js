@@ -123,7 +123,11 @@ app.post("/addEntry", auth, async (req, res) => {
                 where: { id: req.user.userId }
             })
 
-            const { photo, category } = req.body;
+            const { photo, category, label, count } = req.body;
+
+            if (label && label.length > 100) {
+                return res.status(400).json({ error: "Label is too long (max 100 characters)" });
+            }
 
             const expiry = new Date();
             expiry.setDate(expiry.getDate() + 7);
@@ -133,47 +137,47 @@ app.post("/addEntry", auth, async (req, res) => {
                     userId: user.id,
                     photourl: photo,
                     date: new Date(),
-                    label: "Apple-031426",
+                    label: label || ("temp" + count + "-"+ new Date().getMonth() + new Date().getDate()),
                     category: category,
                     expiryDate: expiry
                 }
             })
 
-            let analysis = {
-                freshnessScore: 82,
-                daysRemaining: 3,
-                storageTips: [
-                    "Store in the crisper drawer to keep humidity stable.",
-                    "Keep away from ethylene-sensitive produce to slow ripening.",
-                    "Use within the next few days for best quality."
-                ]
-            };
+            // let analysis = {
+            //     freshnessScore: 82,
+            //     daysRemaining: 3,
+            //     storageTips: [
+            //         "Store in the crisper drawer to keep humidity stable.",
+            //         "Keep away from ethylene-sensitive produce to slow ripening.",
+            //         "Use within the next few days for best quality."
+            //     ]
+            // };
 
-            const base64 = photo && typeof photo === 'string' && photo.startsWith("data:") ? photo.split(",")[1] : null;
+//             const base64 = photo && typeof photo === 'string' && photo.startsWith("data:") ? photo.split(",")[1] : null;
 
-            if (base64 && process.env.GEMINI_API_KEY) {
-                try {
-                    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-                    const prompt = `You are a food freshness assistant. Look at this image of food and return JSON only, with:
-- freshnessScore: number 0-100
-- daysRemaining: integer days until likely spoilage
-- storageTips: array of 2-4 short strings with practical storage advice`;
-                    const result = await model.generateContent([
-                        { text: prompt },
-                        { inlineData: { data: base64, mimeType: "image/png" } }
-                    ]);
-                    const text = result.response?.text?.()?.trim() || '';
-                    const jsonMatch = text.match(/\{[\s\S]*\}/);
-                    if (jsonMatch) {
-                        const parsed = JSON.parse(jsonMatch[0]);
-                        if (typeof parsed.freshnessScore === 'number') analysis.freshnessScore = parsed.freshnessScore;
-                        if (typeof parsed.daysRemaining === 'number') analysis.daysRemaining = parsed.daysRemaining;
-                        if (Array.isArray(parsed.storageTips)) analysis.storageTips = parsed.storageTips;
-                    }
-                } catch (e) {
-                    console.error("Gemini analysis failed, using fallback:", e);
-                }
-            }
+//             if (base64 && process.env.GEMINI_API_KEY) {
+//                 try {
+//                     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+//                     const prompt = `You are a food freshness assistant. Look at this image of food and return JSON only, with:
+// - freshnessScore: number 0-100
+// - daysRemaining: integer days until likely spoilage
+// - storageTips: array of 2-4 short strings with practical storage advice`;
+//                     const result = await model.generateContent([
+//                         { text: prompt },
+//                         { inlineData: { data: base64, mimeType: "image/png" } }
+//                     ]);
+//                     const text = result.response?.text?.()?.trim() || '';
+//                     const jsonMatch = text.match(/\{[\s\S]*\}/);
+//                     if (jsonMatch) {
+//                         const parsed = JSON.parse(jsonMatch[0]);
+//                         if (typeof parsed.freshnessScore === 'number') analysis.freshnessScore = parsed.freshnessScore;
+//                         if (typeof parsed.daysRemaining === 'number') analysis.daysRemaining = parsed.daysRemaining;
+//                         if (Array.isArray(parsed.storageTips)) analysis.storageTips = parsed.storageTips;
+//                     }
+//                 } catch (e) {
+//                     console.error("Gemini analysis failed, using fallback:", e);
+//                 }
+//             }
 
             return res.status(201).json({
                 message: "New entry added",
@@ -182,8 +186,7 @@ app.post("/addEntry", auth, async (req, res) => {
                     label: food.label,
                     category: food.category,
                     expiryDate: food.expiryDate
-                },
-                analysis
+                }
             });
         }
     }

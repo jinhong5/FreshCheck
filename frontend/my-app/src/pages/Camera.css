@@ -91,3 +91,7 @@ p {
   font-size: 18px;
   color: var(--text-primary);
 }
+
+.label-input {
+  width: 450px;
+}

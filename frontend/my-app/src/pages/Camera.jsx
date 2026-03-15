@@ -2,6 +2,16 @@ import { useState, useEffect, useRef } from 'react';
 import "../pages/Camera.css";
 
 export default function Camera() {
+
+    let count = localStorage.getItem("counter");
+
+    if (!count) {
+        count = 0;
+    }
+
+    localStorage.setItem("counter", count);
+
+
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
 
@@ -12,6 +22,9 @@ export default function Camera() {
     const [analysis, setAnalysis] = useState(null);
     const [error, setError] = useState(null);
     const [uploaded, setUploaded] = useState(null);
+    const [label, setLabel] = useState(null);
+
+    // const [count, setCounter] = useState(1);
 
     // when the page loads, ask the user for camera permissions
     useEffect(() => {
@@ -131,6 +144,9 @@ export default function Camera() {
 
             const predicted = await prediction.json();
 
+              count++;
+              localStorage.setItem("counter", count);
+
             const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addEntry`, {
                 method: "POST",
                 headers: {
@@ -139,7 +155,9 @@ export default function Camera() {
                 },
                 body: JSON.stringify({
                     photo: photoPayload,
-                    category: predicted.prediction
+                    category: predicted.prediction,
+                    label: label,
+                    count: count
                 })
             });
 
@@ -152,7 +170,7 @@ export default function Camera() {
             }
 
             const data = await res.json();
-            setAnalysis(data.analysis || null);
+            setAnalysis(data.entry.category || null);
         } catch (err) {
             console.error(err);
             setError(err.message || "Unable to analyze photo right now.");
@@ -200,18 +218,28 @@ export default function Camera() {
                         <button onClick={retakePhoto}>Retake</button>
                         <button disabled={true}>Use Photo</button>
                         <canvas ref={canvasRef} hidden></canvas>
+
+                        <br />
+
+                        <div className="label-input">
+                            <label>Food Label: 
+                                <input type="text" onChange={(e) => {setLabel(e.target.value)}} placeholder="Enter food label"></input>
+                            </label>
+
+                            <button
+                                id="checkmark"
+                                onClick={handleSubmit}
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? "Analyzing..." : "->"}
+                            </button>
+                        </div>
                     </div>
 
                     <br />
 
-                    <button
-                        id="checkmark"
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? "Analyzing..." : "✓"}
-                    </button>
 
+                    
                     {error && (
                         <div className="analysis-error">
                             {error}
@@ -220,11 +248,11 @@ export default function Camera() {
 
                     {analysis && (
                         <div className="analysis-card">
-                            <h2>Freshness analysis</h2>
+                            <h2>Freshness analysis: </h2>
                             <p className="analysis-score">
-                                Freshness score: <span>{analysis.freshnessScore}</span>/100
+                                <span>{analysis}</span>
                             </p>
-                            <p className="analysis-days">
+                            {/* <p className="analysis-days">
                                 Estimated days remaining: <strong>{analysis.daysRemaining}</strong>
                             </p>
                             {analysis.storageTips && analysis.storageTips.length > 0 && (
@@ -233,8 +261,8 @@ export default function Camera() {
                                         <li key={idx}>{tip}</li>
                                     ))}
                                 </ul>
-                            )}
-                        </div>
+                            )} */}
+                        </div> 
                     )}
                 </span>
             </div>
