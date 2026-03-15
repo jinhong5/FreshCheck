@@ -23,7 +23,7 @@ export default function DashboardPage() {
   const [inventory, setInventory] = useState([]);
 
   const [page, setPage] = useState(1);
-  const rowsPerPage = 10;
+  const rowsPerPage = 5;
 
 
   async function fetchUserData() {
@@ -108,12 +108,12 @@ export default function DashboardPage() {
 
                   const left = daysLeft(item.date, item.expiryDate);
                   return (
-                    <tr key={item.id}>
+                    <tr key={item.id} style={{ backgroundColor: left <= 1 ? "var(--warning)" : "inherit", color: left <= 1 ? "var(--text-primary)" : "inherit" }}>
                       <td><img src={item.photourl} alt={item.label} width={100} /></td>
                       <td>{item.label}</td>
                       <td>{item.category}</td>
                       <td>{formatDateTime(item.expiryDate)}</td>
-                      <td style={{ color: left <= 1 ? "red" : "inherit", fontWeight: left <= 1 ? "bold" : "normal" }}>
+                      <td>
                         {left}</td>
                     </tr>
                   )

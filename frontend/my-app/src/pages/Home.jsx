@@ -59,8 +59,7 @@ export default function HomePage() {
           <h2>What it does</h2>
           <p>
             Using computer vision, FreshCheck detects visual freshness indicators like discoloration, bruising, or mold.
-            Based on those signals, it generates a freshness score, an estimate of days remaining, and storage tips to
-            extend shelf life.
+            Based on those signals, it generates a freshness score and an estimate of days remaining.
           </p>
           <p className="pitch-note">
             Users can also report how long the food actually lasted, feeding back into the system to improve future
@@ -71,13 +70,10 @@ export default function HomePage() {
         <article className="pitch-card">
           <h2>Why we built it</h2>
           <p>
-            Food waste is a major global issue, and many people throw away food simply because they are unsure if it is
-            still safe to eat. FreshCheck helps households make more informed decisions, reducing waste, saving money,
-            and enabling more food to be donated instead of discarded.
+            50% of the world's fruits and vegetables are lost before reaching consumers. FreshCheck helps households, small businesses and cafeterias reduce food waste.
           </p>
           <p>
-            Our goal is to use AI not just as a tech demo, but as a practical tool that helps people use food more
-            thoughtfully.
+            Our goal is to address the global food security issue.
           </p>
         </article>
       </section>

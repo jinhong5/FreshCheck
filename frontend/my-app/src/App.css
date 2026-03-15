@@ -1,33 +1,42 @@
 body {
   margin: 0;
   min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 0.5rem;
 }
 
 :root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f7fafc;
-  --bg-tertiary: #fff9f9;
-  --text-primary: #000000;
-  --text-secondary: #D53B07;
+  --bg-primary: linear-gradient(135deg, #fff5e6 0%, #e6f7ff 100%);
+  --bg-secondary: rgba(255, 255, 255, 0.6);
+  --bg-tertiary: rgba(255, 255, 255, 0.8);
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
 
   --small-text-colour: #ffffff;
-  --accent-text-colour: #b32d00;
-  --accent-color: #D53B07;
-  --primary-accent-colour: #D53B07;
-  --border-colour: #dfdfdf;
+  --accent-text-colour: #ff6b6b;
+  --accent-color: #ff8c42;
+  --primary-accent-colour: #ff6b6b;
+  --border-colour: rgba(255, 255, 255, 0.9);
   --disabled-colour: #dfdfdf;
   --primary-textbox-error-colour: #fed7d7;
 
   /* Colours for when things are clicked */
-  --primary-clicked-colour: #932500;
+  --primary-clicked-colour: #e07030;
   --selected-button-colour: #ff8040;
 
   /** THIS SHOULD BE USED FOR ANYTHING CONSIDERED "BAD" **/
   --invalid-input: #e74c3c;
 
-  --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  --shadow-small: 0 2px 6px rgba(0, 0, 0, 0.15);
-  --shadow-hover: 0 4px 10px rgba(0, 0, 0, 0.2);
+  --shadow: 0 10px 40px rgba(255, 140, 66, 0.15);
+  --shadow-small: 0 2px 6px rgba(255, 140, 66, 0.08);
+  --shadow-hover: 0 20px 40px rgba(255, 140, 66, 0.25);
 
   --green: #26ad5e;
   --yellow: #b08f0b;
@@ -35,33 +44,34 @@ body {
   --red: #e74c3c;
   --blue-grey: #4d6ba2;
   --black: #000000;
+  --warning: #fb6166;
 }
 
 .dark {
-  --bg-primary: #1a202c;
-  --bg-secondary: #222935;
-  --bg-tertiary: #2d2d3a;
-  --text-primary: #edf2f7;
-  --text-secondary: #a0aec0;
+  --bg-primary: linear-gradient(135deg, #0a192f 0%, #153e5b 100%);
+  --bg-secondary: rgba(16, 28, 45, 0.65);
+  --bg-tertiary: rgba(255, 255, 255, 0.05);
+  --text-primary: #ccd6f6;
+  --text-secondary: #8892b0;
 
-  --small-text-colour: #c5c5c5;
-  --accent-text-colour: #c23202;
-  --accent-color: #9c2a04;
-  --primary-accent-colour: #9c2a04;
-  --border-colour: #5b5a5a;
+  --small-text-colour: #858181;
+  --accent-text-colour: #ff8e8b;
+  --accent-color: #d9884e;
+  --primary-accent-colour: #ff8e8b;
+  --border-colour: rgba(255, 255, 255, 0.06);
   --disabled-colour: #555555;
   --primary-textbox-error-colour: #635454;
 
   /* Colours for when things are clicked */
-  --primary-clicked-colour: #c03000;
-  --selected-button-colour: #8e4724;
+  --primary-clicked-colour: #e28f5c;
+  --selected-button-colour: #ff914d;
 
   /** THIS SHOULD BE USED FOR ANYTHING CONSIDERED "BAD" **/
   --invalid-input: #9f352a;
 
-  --shadow: 0 10px 40px rgba(255, 255, 255, 0.1);
-  --shadow-small: 0 2px 6px rgba(255, 255, 255, 0.15);
-  --shadow-hover: 0 4px 10px rgba(255, 255, 255, 0.2);
+  --shadow: 0 10px 40px rgba(255, 176, 118, 0.08);
+  --shadow-small: 0 2px 6px rgba(255, 176, 118, 0.05);
+  --shadow-hover: 0 20px 40px rgba(255, 176, 118, 0.2);
 
   --green: #2ecc71;
   --yellow: #f1c40f;
@@ -69,4 +79,5 @@ body {
   --red: #e74c3c;
   --blue-grey: #6388ce;
   --black: #d0d0d0;
+  --warning: #8f2228;
 }
