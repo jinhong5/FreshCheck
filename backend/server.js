@@ -118,48 +118,46 @@ app.post('/auth/google', async (req, res) => {
 
 app.post("/addEntry", auth, async (req, res) => {
     try {
-        if (req.user) {
-            const user = await prisma.user.findUnique({
-                where: { id: req.user.userId }
-            })
+      if (req.user) {
+          const user = await prisma.user.findUnique({
+              where: { id: req.user.userId }
+          })
 
-            const { photo, category, label, count } = req.body;
+          const { photo, category, label, count } = req.body;
 
-            if (label && label.length > 100) {
-                return res.status(400).json({ error: "Label is too long (max 100 characters)" });
-            }
+          if (label && label.length > 100) {
+              return res.status(400).json({ error: "Label is too long (max 100 characters)" });
+          }
 
-            const expiry = new Date();
-            expiry.setDate(expiry.getDate() + 7);
+          const expiry = new Date();
+          expiry.setDate(expiry.getDate() + 7);
 
-            const food = await prisma.food.create({
-                data: {
-                    userId: user.id,
-                    photourl: photo,
-                    date: new Date(),
-                    label: label || ("temp" + count + "-"+ new Date().getMonth() + new Date().getDate()),
-                    category: category,
-                    expiryDate: expiry
-                }
-            })
+          const food = await prisma.food.create({
+              data: {
+                  userId: user.id,
+                  photourl: photo,
+                  date: new Date(),
+                  label: label || ("temp" + count + "-"+ new Date().getMonth() + new Date().getDate()),
+                  category: category,
+                  expiryDate: expiry
+              }
+          })
 
-            return res.status(201).json({
-                message: "New entry added",
-                entry: {
-                    id: food.id,
-                    label: food.label,
-                    category: food.category,
-                    expiryDate: food.expiryDate
-                }
-            });
-        }
+          return res.status(201).json({
+              message: "New entry added",
+              entry: {
+                  id: food.id,
+                  label: food.label,
+                  category: food.category,
+                  expiryDate: food.expiryDate
+              }
+          });
       }
     }
-  }
-  catch (err) {
-    console.error("Error creating food:", err);
-    return res.status(500).json({ error: err.message });
-  }
+    catch (err) {
+      console.error("Error creating food:", err);
+      return res.status(500).json({ error: err.message });
+    }
 })
 
 app.get('/inventory', auth, async (req, res) => {
