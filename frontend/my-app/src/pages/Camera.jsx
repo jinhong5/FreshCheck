@@ -130,7 +130,7 @@ export default function Camera() {
 
     if (!photo) {
         return (
-            <div>
+            <div className="db-main">
                 <div className="camera">
                     <video className="video" ref={videoRef} autoPlay></video>
                     <br />
@@ -147,7 +147,7 @@ export default function Camera() {
 
     else if (photo && !selected) {
         return (
-            <div>
+            <div className="db-main">
                 <img className="video" src={photo} />
                 <br />
                 <button onClick={retakePhoto}>Retake</button>
@@ -159,7 +159,7 @@ export default function Camera() {
 
     else {
         return (
-            <div>
+            <div className="db-main">
                 <span className="container">
                     <div>
                         <img className="video" src={photo} />

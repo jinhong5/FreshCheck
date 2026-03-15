@@ -1,3 +1,12 @@
+.db-main {
+  margin: 0 auto;
+  padding: 2.5rem;
+  background: transparent;
+  text-align: center;
+  min-height: 100vh;
+}
+
+
 .video {
   border-radius: 20px;
   /* border: 2px solid black; */

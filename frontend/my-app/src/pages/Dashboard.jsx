@@ -23,7 +23,7 @@ export default function DashboardPage() {
   const [inventory, setInventory] = useState([]);
 
   const [page, setPage] = useState(1);
-  const rowsPerPage = 10;
+  const rowsPerPage = 5;
 
 
   async function fetchUserData() {

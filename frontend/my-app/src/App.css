@@ -5,6 +5,13 @@ body {
   color: var(--text-primary);
 }
 
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 0.5rem;
+}
+
 :root {
   --bg-primary: linear-gradient(135deg, #fff5e6 0%, #e6f7ff 100%);
   --bg-secondary: rgba(255, 255, 255, 0.6);
@@ -47,9 +54,9 @@ body {
   --text-primary: #ccd6f6;
   --text-secondary: #8892b0;
 
-  --small-text-colour: #c5c5c5;
+  --small-text-colour: #858181;
   --accent-text-colour: #ff8e8b;
-  --accent-color: #ffb076;
+  --accent-color: #d9884e;
   --primary-accent-colour: #ff8e8b;
   --border-colour: rgba(255, 255, 255, 0.06);
   --disabled-colour: #555555;
