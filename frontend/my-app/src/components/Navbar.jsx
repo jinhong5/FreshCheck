@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import { useTheme } from '../contexts/ThemeContext';
 import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from './userContext.jsx';
+import { UserContext } from '../contexts/UserContext.jsx';
 import './Navbar.css';
 import { useGoogleLogin } from "@react-oauth/google";
 
@@ -17,7 +17,7 @@ export default function Navbar() {
   const { darkMode, toggleTheme } = useTheme();
   const { loggedIn, logout } = useContext(UserContext);
   const navigate = useNavigate();
-  const { login } = useContext(UserContext)
+  const { login } = useContext(UserContext);
 
   function handleLogout() {
     logout();
@@ -71,7 +71,7 @@ export default function Navbar() {
       <div className="nav-left">
         <Link to="/" className="link">Home</Link>
         {loggedIn && <Link to="/dashboard" className="link">Dashboard</Link>}
-        {loggedIn && <Link to="/new-entry" className="link">Scan an Item</Link>}
+        {loggedIn && <Link to="/new-entry" className="link">Upload</Link>}
       </div>
       <div className="nav-right">
         {/* Dark Mode Icon */}

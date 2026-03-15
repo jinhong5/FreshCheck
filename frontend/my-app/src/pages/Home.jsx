@@ -1,6 +1,6 @@
 import "./Home.css";
 import React, { useState, useEffect, useContext } from "react";
-import { UserContext } from "../components/userContext";
+import { UserContext } from '../contexts/UserContext';
 
 export default function HomePage() {
 
@@ -59,10 +59,6 @@ export default function HomePage() {
             <p>
               Using computer vision, FreshCheck detects visual freshness indicators like discoloration, bruising, or mold.
               Based on those signals, it generates a freshness score and an estimate of days remaining.
-            </p>
-            <p className="pitch-note">
-              Users can also report how long the food actually lasted, feeding back into the system to improve future
-              predictions.
             </p>
           </article>
 
