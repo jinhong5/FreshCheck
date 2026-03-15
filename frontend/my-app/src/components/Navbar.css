@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between; /* Push left and right apart */
   align-items: center;
-  padding: 16px 32px;
+  padding: 10px 20px;
   background: var(--bg-secondary);
   backdrop-filter: blur(10px);
   flex-wrap: nowrap; /* prevent wrapping to next line */
@@ -53,4 +53,9 @@
 /* Optional: scale down the default Google button */
 .custom-google-login > div {
   transform: scale(0.95);
+}
+
+img.logo {
+  width: 125px;
+  height: 90px;
 }

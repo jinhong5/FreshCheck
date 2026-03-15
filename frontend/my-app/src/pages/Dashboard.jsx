@@ -92,7 +92,7 @@ export default function DashboardPage() {
 
                   const left = daysLeft(item.date, item.expiryDate);
                   return (
-                    <tr key={item.id} style={{ backgroundColor: left <= 1 ? "var(--warning)" : "inherit", color: left <= 1 ? "var(--text-primary)" : "inherit" }}>
+                    <tr key={item.id} className={left <= 1 ? "spoiled" : ""}>
                       <td><img src={item.photourl} alt={item.label} width={100} /></td>
                       <td>{item.label}</td>
                       <td>{item.category}</td>
