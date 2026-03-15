@@ -1,80 +1,93 @@
-# import torch
-# import torchvision.transforms as transforms
-# from torch.utils.data import DataLoader
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader
+import torchvision.transforms as transforms
 
-# from dataset import FruitZipDataset
-# from model import FruitExpirationModel
+from dataset import FruitDataset
+from model import MultimodalModel
 
-
-# def main():
-
-#     device = "cuda" if torch.cuda.is_available() else "cpu"
-
-#     # image preprocessing
-#     transform = transforms.Compose([
-#         transforms.Resize((224, 224)),
-#         transforms.RandomHorizontalFlip(),
-#         transforms.ToTensor(),
-#     ])
-
-#     dataset = FruitZipDataset(
-#         "data/fruit_dataset.zip",
-#         transform=transform
-#     )
-
-#     loader = DataLoader(
-#         dataset,
-#         batch_size=32,
-#         shuffle=True,
-#         num_workers=0  # <- must be zero on Windows for non-picklable dataset
-#     )
-
-#     model = FruitExpirationModel().to(device)
-
-#     criterion = torch.nn.MSELoss()
-
-#     optimizer = torch.optim.Adam(
-#         model.parameters(),
-#         lr=1e-4
-#     )
-
-#     epochs = 10
-
-#     for epoch in range(epochs):
-
-#         total_loss = 0
-
-#         for images, labels in loader:
-
-#             images = images.to(device)
-#             labels = labels.float().to(device)
-
-#             preds = model(images).squeeze()
-
-#             loss = criterion(preds, labels)
-
-#             optimizer.zero_grad()
-#             loss.backward()
-#             optimizer.step()
-
-#             total_loss += loss.item()
-
-#         print(f"Epoch {epoch+1}/{epochs} Loss: {total_loss:.4f}")
-        
-#     torch.save(model.state_dict(), "banana_model.pth")
-#     print("Model saved to banana_model.pth")
-
-#     model.eval()  # switch to evaluation mode
-#     with torch.no_grad():
-#         for i, (images, labels) in enumerate(loader):
-#             images = images.to(device)
-#             labels = labels.to(device)
-#             preds = model(images).squeeze()
-#             print(f"Batch {i+1}")
-#             for j in range(min(5, len(preds))):  # print first 5 predictions
-#                 print(f"Pred: {preds[j].item():.2f}, True: {labels[j].item():.2f}")
-#             break 
+def main():
+  DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
-# if __name__ == "__main__":
-#     main()
+  transform = transforms.Compose([
+      transforms.Resize((224,224)),
+      transforms.ToTensor(),
+  ])
+
+
+  dataset = FruitDataset(
+      root_dir=r"C:/Users/andre/Hackathon/FreshCheck/backend/data/TR-6",
+      transform=transform
+  )
+
+  loader = DataLoader(
+      dataset,
+      batch_size=32,
+      shuffle=True,
+      num_workers=4
+  )
+
+
+  model = MultimodalModel().to(DEVICE)
+
+  criterion = nn.CrossEntropyLoss()
+
+  optimizer = optim.Adam(
+      model.parameters(),
+      lr=1e-4
+  )
+
+
+  EPOCHS = 4
+
+
+  for epoch in range(EPOCHS):
+      print("Starting epoch")
+      model.train()
+
+      total_loss = 0
+
+      count = 0
+      for images, methane, labels in loader:
+          count += 1
+          if count % 10 == 0:
+             print(count)
+
+          print("image")
+          images = images.to(DEVICE)
+          print("methane")
+          methane = methane.to(DEVICE)
+          print("labels")
+          labels = labels.to(DEVICE)
+
+          print("optimizer")
+          optimizer.zero_grad()
+
+          print("output")
+          outputs = model(images, methane)
+
+          print("loss")
+          loss = criterion(outputs, labels)
+
+          print("backward")
+          loss.backward()
+
+          print("optimizer step")
+          optimizer.step()
+
+          print("total_loss")
+          total_loss += loss.item()
+
+      avg_loss = total_loss / len(loader)
+
+      print(f"Epoch {epoch+1}/{EPOCHS}  Loss: {avg_loss:.4f}")
+
+
+  torch.save(model.state_dict(), "fruit_spoilage_model.pth")
+
+  print("Model saved.")
+  
+if __name__ == "__main__":
+   main()

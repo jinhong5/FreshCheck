@@ -1,8 +1,11 @@
 import torch
-from model2 import MultimodalModel
+from model import MultimodalModel
 
 from PIL import Image
 import torchvision.transforms as transforms
+
+import sys
+import json
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 p1 = "C:/Users/andre/Hackathon/FreshCheck/backend/data/TR-6/Classified/Banana/Not_spoiled/sRGB_images/20250911_101403.jpg"
@@ -29,20 +32,24 @@ def predImage(img):
       transforms.ToTensor(),
   ])
 
-  image = Image.open(img)
+  image = Image.open(img).convert("RGB")
   image = transform(image).unsqueeze(0).to(device)
   methane = torch.tensor([[0.0]], dtype=torch.float32).to(device)
 
   with torch.no_grad():
     pred = model(image, methane)
-  print("Pred: ", pred)
-  pred_label = pred.argmax(dim=1).item()
-
-  print("Predicted label:", "Spoiled" if pred_label == 1 else "Not_spoiled")
+  not_spoiled_value = pred[0, 0].item()
+  spoiled_value = pred[0, 1].item()
+  label = "Fresh" if not_spoiled_value > spoiled_value else "Spoiled"
+  return {
+    "not_spoiled": not_spoiled_value, 
+    "spoiled": spoiled_value,
+    "prediction": label
+  }
 
 if __name__ == "__main__":
-  predImage(p1)
-  predImage(p2)
-  predImage(t1)
-  predImage(t2)
-  predImage(t3)
+  img_path = sys.argv[1]
+
+  result = predImage(img_path)
+
+  print(json.dumps(result), flush=True)

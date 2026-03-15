@@ -11,6 +11,7 @@ export default function Camera() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [analysis, setAnalysis] = useState(null);
     const [error, setError] = useState(null);
+    const [uploaded, setUploaded] = useState(null);
 
     // when the page loads, ask the user for camera permissions
     useEffect(() => {
@@ -56,7 +57,7 @@ export default function Camera() {
 
         const data = canvas.toDataURL("image/png");
         setPhoto(data);
-
+        setUploaded(null);
     }
 
     function uploadPhoto(e) {
@@ -66,6 +67,7 @@ export default function Camera() {
         // create a url for the uploaded photo
         const url = URL.createObjectURL(file);
         setPhoto(url);
+        setUploaded(file);
     }
 
     const retakePhoto = () => {
@@ -92,12 +94,42 @@ export default function Camera() {
         return photoSrc;
     }
 
+    function dataURLtoBlob(dataURL) {
+      const arr = dataURL.split(",");
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+
+      while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+      }
+
+      return new Blob([u8arr], { type: mime });
+    }
+
     async function handleSubmit() {
         setIsSubmitting(true);
         setError(null);
 
         try {
             const photoPayload = await photoToDataUrl(photo);
+            const formData = new FormData();
+            if(!uploaded) {
+              const blob = dataURLtoBlob(photo);
+              formData.append("image", blob, "capture.png");
+            } else {
+              formData.append("image", uploaded);
+            }
+            const prediction = await fetch(`${import.meta.env.VITE_API_BASE_URL}/predict`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                },
+                body: formData
+            });
+
+            const predicted = await prediction.json();
 
             const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addEntry`, {
                 method: "POST",
@@ -106,7 +138,8 @@ export default function Camera() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    photo: photoPayload
+                    photo: photoPayload,
+                    category: predicted.prediction
                 })
             });
 
