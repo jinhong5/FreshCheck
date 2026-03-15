@@ -206,7 +206,7 @@ export default function Camera() {
         )
     }
 
-    else if (photo && !selected) {
+    else if (photo && !selected && !hasSubmit) {
         return (
             <div className="db-main">
                 <img className="video" src={photo} />
@@ -231,7 +231,7 @@ export default function Camera() {
 
                         <br />
                         {console.log("Out: " + selected)}
-                        
+
                         {selected ?
                         (<div className="label-input">
                             <div className="modal">

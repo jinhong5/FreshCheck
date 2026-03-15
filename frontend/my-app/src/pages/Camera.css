@@ -8,10 +8,10 @@
 
 
 .video {
-  border-radius: 20px;
-  width: 320px;
-  height: 240px;
-  margin-top: 60px;
+  border-radius: 50px;
+  width: 400px;
+  height: 300px;
+  margin-top: 30px;
 }
 
 /* #checkmark {
