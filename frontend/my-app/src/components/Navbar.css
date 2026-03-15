@@ -31,7 +31,7 @@
 .nav-left, .nav-right {
   display: flex;
   align-items: center;
-  gap: 16px; /* space between items */
+  gap: 30px; /* space between items */
   flex-shrink: 0; /* prevents items from shrinking too much */
 }
 

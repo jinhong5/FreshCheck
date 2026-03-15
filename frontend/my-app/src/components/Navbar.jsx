@@ -71,7 +71,7 @@ export default function Navbar() {
       <div className="nav-left">
         <Link to="/" className="link">Home</Link>
         {loggedIn && <Link to="/dashboard" className="link">Dashboard</Link>}
-        {loggedIn && <Link to="/new-entry" className="link">Scan an Item</Link>}
+        {loggedIn && <Link to="/new-entry" className="link">Upload</Link>}
       </div>
       <div className="nav-right">
         {/* Dark Mode Icon */}

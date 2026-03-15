@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard.jsx';
 import Layout from './components/Layout.jsx';
 import Camera from './pages/Camera.jsx';
 import Home from './pages/Home.jsx';
+import Temp from './pages/Temp.jsx';
 
 
 function App() {

@@ -60,10 +60,6 @@ export default function HomePage() {
               Using computer vision, FreshCheck detects visual freshness indicators like discoloration, bruising, or mold.
               Based on those signals, it generates a freshness score and an estimate of days remaining.
             </p>
-            <p className="pitch-note">
-              Users can also report how long the food actually lasted, feeding back into the system to improve future
-              predictions.
-            </p>
           </article>
 
           <article className="pitch-card">
