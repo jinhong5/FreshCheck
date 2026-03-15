@@ -86,8 +86,10 @@ app.post('/auth/google', async (req, res) => {
       return res.status(400).json({ error: "Invalid Google user data" });
     }
 
+    console.log(user);
+
     const email = user.email;
-    const name = user.name;
+    //const name = user.given_name;
 
     let dbUser = await prisma.user.findUnique({
       where: { email: email }
@@ -97,7 +99,8 @@ app.post('/auth/google', async (req, res) => {
       dbUser = await prisma.user.create({
         data: {
           email: email,
-          firstName: name
+          firstName: user.given_name || "",
+          lastName: user.family_name || ""
         }
       });
     }
@@ -138,6 +141,8 @@ app.post("/addEntry", auth, async (req, res) => {
             expiry.setDate(expiry.getDate() + daysLeft);
           }
 
+          const shelfLife = Math.ceil((expiry - new Date()) / (1000 * 60 * 60 * 24));
+
           const food = await prisma.food.create({
               data: {
                   userId: user.id,
@@ -145,7 +150,8 @@ app.post("/addEntry", auth, async (req, res) => {
                   date: new Date(),
                   label: label || ("temp" + count + "-"+ new Date().getMonth() + new Date().getDate()),
                   category: category,
-                  expiryDate: expiry
+                  expiryDate: expiry,
+                  shelfLife: shelfLife
               }
           })
 
@@ -168,32 +174,55 @@ app.post("/addEntry", auth, async (req, res) => {
 
 app.get('/inventory', auth, async (req, res) => {
   try {
-    const { folderId } = req.query;
+    // const { folderId } = req.query;
     // console.log("id: " + folderId);
-    if (folderId) {
-      console.log("problem");
-      const found = await prisma.food.findUnique({
-        where: { id: parseInt(folderId) },
-        include: { posts: { orderBy: { id: 'desc' } } }
+    // if (folderId) {
+    //   console.log("problem");
+    //   const found = await prisma.food.findUnique({
+    //     where: { id: parseInt(folderId) },
+    //     include: { posts: { orderBy: { id: 'desc' } } }
 
-      })
-      console.log("problem here");
-      console.log(found);
-      if (found) {
-        console.log("a folder has been found");
-        console.log(found.posts);
-        return res.status(200).json(found.posts);
-      }
-    }
+    //   })
+    //   console.log("problem here");
+    //   console.log(found);
+    //   if (found) {
+    //     console.log("a folder has been found");
+    //     console.log(found.posts);
+    //     return res.status(200).json(found.posts);
+    //   }
+    // }
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const offset = (page - 1) * limit;
+
+    // const found = await prisma.food.findMany({
+    //     where: { userId: req.user.userId },
+    //     skip: (page - 1) * limit,  // how many rows to skip
+    //     take: limit,  
+    //     orderBy: { shelfLife: 'asc' }
+    // })
+
+
 
 
     if (req.user) {
       const user = await prisma.user.findUnique({
         where: { id: req.user.userId },
-        include: { food: { orderBy: { id: 'desc' } } }
-      })
+        include: { 
+            food: { 
+                orderBy: { shelfLife: 'asc' },
+                skip: (page - 1) * limit,  // how many rows to skip
+                take: limit,  
+            },
+         },
+      });
+
       if (user) {
-        return res.status(200).json(user.food);
+        const totalCount = await prisma.food.count({
+        where: { userId: req.user.userId },
+        });
+        const totalPages = Math.ceil(totalCount / limit);
+        return res.status(200).json({ items: user.food, totalPages, currentPage: page, totalCount });
       }
       else {
         return res.status(404).json({ error: "User not found" });
