@@ -11,6 +11,7 @@ export default function Camera() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [analysis, setAnalysis] = useState(null);
     const [error, setError] = useState(null);
+    const [uploaded, setUploaded] = useState(null);
 
     // when the page loads, ask the user for camera permissions
     useEffect(() => {
@@ -56,7 +57,7 @@ export default function Camera() {
 
         const data = canvas.toDataURL("image/png");
         setPhoto(data);
-
+        setUploaded(null);
     }
 
     function uploadPhoto(e) {
@@ -66,6 +67,7 @@ export default function Camera() {
         // create a url for the uploaded photo
         const url = URL.createObjectURL(file);
         setPhoto(url);
+        setUploaded(file);
     }
 
     const retakePhoto = () => {
@@ -112,11 +114,13 @@ export default function Camera() {
 
         try {
             const photoPayload = await photoToDataUrl(photo);
-            const blob = dataURLtoBlob(photo);
-
             const formData = new FormData();
-            formData.append("image", blob, "capture.png");
-
+            if(!uploaded) {
+              const blob = dataURLtoBlob(photo);
+              formData.append("image", blob, "capture.png");
+            } else {
+              formData.append("image", uploaded);
+            }
             const prediction = await fetch(`${import.meta.env.VITE_API_BASE_URL}/predict`, {
                 method: "POST",
                 headers: {

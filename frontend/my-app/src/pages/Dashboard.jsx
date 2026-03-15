@@ -34,11 +34,8 @@ export default function DashboardPage() {
       }
     })
 
-    console.log(res);
-
     if (res.ok) {
       const data = await res.json();
-      console.log(data);
       setUser(data);
     }
 
