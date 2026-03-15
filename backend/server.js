@@ -18,22 +18,8 @@ const cors = require("cors");
 const upload = multer({ dest: "uploads/" });
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
-const isDev = process.env.NODE_ENV !== "production";
 app.use(cors({
-  origin: isDev ? true : (origin, cb) => {
-    const allowed = [
-      FRONTEND_URL,
-      "http://localhost:5173",
-      "http://127.0.0.1:5173",
-      "http://localhost:3000",
-      "http://127.0.0.1:3000"
-    ];
-    if (!origin || allowed.some(url => origin === url)) return cb(null, true);
-    if (origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:")) return cb(null, true);
-    return cb(null, false);
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: true,
   credentials: true
 }));
 
