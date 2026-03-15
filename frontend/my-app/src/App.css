@@ -14,8 +14,8 @@ footer {
 
 :root {
   --bg-primary: linear-gradient(135deg, #fff5e6 0%, #e6f7ff 100%);
-  --bg-secondary: rgba(255, 255, 255, 0.6);
-  --bg-tertiary: rgba(255, 255, 255, 0.8);
+  --bg-secondary: linear-gradient(135deg, #eadbc4 0%, #b8d5e3 100%);
+  --bg-tertiary: linear-gradient(135deg, #d1c4b1 0%, #a0b9c6 100%);
   --text-primary: #2d3748;
   --text-secondary: #4a5568;
 

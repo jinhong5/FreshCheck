@@ -35,7 +35,6 @@ export default function HomePage() {
   return (
 
     <main className="home-main">
-
       {loggedIn && user && < h3 > Welcome back, {user.firstName}!</h3>}
       {!loggedIn && <h3>Log in to save your inventory</h3>}
 
