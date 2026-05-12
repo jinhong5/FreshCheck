@@ -7,9 +7,7 @@ import Layout from './components/Layout.jsx';
 import Camera from './pages/Camera.jsx';
 import Home from './pages/Home.jsx';
 
-
 function App() {
-
   return (
     <ThemeProvider>
       <Routes>
